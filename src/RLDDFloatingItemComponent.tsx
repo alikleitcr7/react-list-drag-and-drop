@@ -1,7 +1,7 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import RLDDLogic from './RLDDLogic';
-import { Point, Rect } from './Geometry';
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import RLDDLogic from "./RLDDLogic";
+import { Point, Rect } from "./Geometry";
 
 export interface RLDDFloatingItemProps {
   logic: RLDDLogic;
@@ -15,8 +15,10 @@ export interface RLDDFloatingItemState {
   offsetY: number;
 }
 
-class RLDDFloatingItemComponent extends React.Component<RLDDFloatingItemProps, RLDDFloatingItemState> {
-
+class RLDDFloatingItemComponent extends React.Component<
+  RLDDFloatingItemProps,
+  RLDDFloatingItemState
+> {
   readonly state: RLDDFloatingItemState = { offsetX: 0, offsetY: 0 };
 
   componentDidMount() {
@@ -33,21 +35,25 @@ class RLDDFloatingItemComponent extends React.Component<RLDDFloatingItemProps, R
 
   refresh = (id: number, offset: Point) => {
     this.setState({ offsetX: offset.x, offsetY: offset.y });
-  }
+  };
 
   render() {
     // console.log('RLDDFloatingItemComponent.render');
-    if (this.props.draggedId >= -1) {
+    if (
+      (typeof this.props.draggedId === "number" &&
+        this.props.draggedId >= -1) ||
+      (typeof this.props.draggedId === "string" && this.props.draggedId !== "")
+    ) {
       return (
         <div
           className="dl-item floating"
           style={{
-            pointerEvents: 'none',
-            position: 'absolute',
+            pointerEvents: "none",
+            position: "absolute",
             left: this.state.offsetX,
             top: this.state.offsetY,
             width: this.props.width,
-            height: this.props.height
+            height: this.props.height,
           }}
         >
           {this.props.children}
@@ -60,9 +66,10 @@ class RLDDFloatingItemComponent extends React.Component<RLDDFloatingItemProps, R
 
   private getBox(): Rect {
     const ref = ReactDOM.findDOMNode(this) as Element;
-    return ref ? ref.getBoundingClientRect() : { top: 0, left: 0, width: 0, height: 0 };
+    return ref
+      ? ref.getBoundingClientRect()
+      : { top: 0, left: 0, width: 0, height: 0 };
   }
-
 }
 
 export default RLDDFloatingItemComponent;
