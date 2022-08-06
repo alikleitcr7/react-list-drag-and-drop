@@ -1,8 +1,8 @@
-import * as React from 'react';
+import * as React from "react";
 
-import RLDDItemComponent from './RLDDItemComponent';
-import RLDDLogic from './RLDDLogic';
-import RLDDFloatingItemComponent from './RLDDFloatingItemComponent';
+import RLDDItemComponent from "./RLDDItemComponent";
+import RLDDLogic from "./RLDDLogic";
+import RLDDFloatingItemComponent from "./RLDDFloatingItemComponent";
 
 export interface RLDDItem {
   id: number | string;
@@ -11,7 +11,7 @@ export interface RLDDItem {
 export interface RLDDProps {
   cssClasses?: string;
   inlineStyle?: {};
-  layout?: 'vertical' | 'horizontal' | 'grid';
+  layout?: "vertical" | "horizontal" | "grid";
   threshold?: number;
   dragDelay?: number;
   items: Array<RLDDItem>;
@@ -22,26 +22,29 @@ export interface RLDDProps {
 export interface RLDDState {
   draggedId: number;
   hoveredId: number;
-  draggedItemDimensions: { width: number, height: number };
+  draggedItemDimensions: { width: number; height: number };
 }
 
 export default class RLDD extends React.Component<RLDDProps, RLDDState> {
-    
   static defaultProps: Partial<RLDDProps> = {
-    cssClasses: '',
+    cssClasses: "",
     inlineStyle: {},
-    layout: 'vertical',
+    layout: "vertical",
     threshold: 15,
-    dragDelay: 250
+    dragDelay: 250,
   };
-  
-  readonly state: RLDDState  = { draggedId: -1, hoveredId: -1, draggedItemDimensions: { width: 0, height: 0 } };
+
+  readonly state: RLDDState = {
+    draggedId: -1,
+    hoveredId: -1,
+    draggedItemDimensions: { width: 0, height: 0 },
+  };
 
   private logic: RLDDLogic;
 
   constructor(props: RLDDProps) {
     super(props);
-    this.logic = new RLDDLogic( props.threshold!, props.dragDelay!);
+    this.logic = new RLDDLogic(props.threshold!, props.dragDelay!);
   }
 
   componentDidMount() {
@@ -59,12 +62,12 @@ export default class RLDD extends React.Component<RLDDProps, RLDDState> {
   getStateString(props: RLDDProps, state: RLDDState): string {
     return `draggedId: ${state.draggedId}
 hoveredId: ${state.hoveredId}
-items: ${props.items.map(item => item.id).toString()}`;
+items: ${props.items.map((item) => item.id).toString()}`;
   }
 
   render() {
     // console.log('RLDD.render');
-    const cssClasses = this.props.cssClasses + ' dl-list';
+    const cssClasses = this.props.cssClasses + " dl-list";
     const style = this.computeStyle();
     const items = this.props.items;
     return (
@@ -90,7 +93,7 @@ items: ${props.items.map(item => item.id).toString()}`;
         {this.props.itemRenderer(item, i)}
       </RLDDItemComponent>
     );
-  }
+  };
 
   private createFloatingComponent = (): JSX.Element => {
     const draggedItemId = this.state.draggedId;
@@ -104,20 +107,25 @@ items: ${props.items.map(item => item.id).toString()}`;
         width={this.state.draggedItemDimensions.width}
         height={this.state.draggedItemDimensions.height}
       >
-        {draggedItemIndex >= 0 && this.props.itemRenderer(item, draggedItemIndex)}
+        {draggedItemIndex >= 0 &&
+          this.props.itemRenderer(item, draggedItemIndex)}
       </RLDDFloatingItemComponent>
     );
-  }
+  };
 
   private computeStyle() {
-    const display: string = this.props.layout === 'vertical' ? 'block' : 'flex';
+    const display: string = this.props.layout === "vertical" ? "block" : "flex";
     return Object.assign({ display }, this.props.inlineStyle || {});
   }
 
-  private handleDragBegin = (draggedId: number, width: number, height: number) => {
+  private handleDragBegin = (
+    draggedId: number,
+    width: number,
+    height: number
+  ) => {
     const draggedItemDimensions = { width, height };
     this.setState({ draggedId, draggedItemDimensions });
-  }
+  };
 
   private handleMouseOver = (hoveredId: number) => {
     if (this.state.draggedId >= 0) {
@@ -128,37 +136,40 @@ items: ${props.items.map(item => item.id).toString()}`;
         }
       });
     }
-  }
+  };
 
   private handleDragEnd = () => {
     this.setState({ draggedId: -1, hoveredId: -1 });
-  }
+  };
 
   private getNewItems(): RLDDItem[] | undefined {
     const index0 = this.findItemIndexById(this.state.draggedId);
     const index1 = this.findItemIndexById(this.state.hoveredId);
 
     if (index0 >= 0 && index1 >= 0 && index0 !== index1) {
-      const newItems = this.logic.arrangeItems(this.props.items, index0, index1);
+      const newItems = this.logic.arrangeItems(
+        this.props.items,
+        index0,
+        index1
+      );
       return newItems;
     }
     return;
   }
 
   private findItemIndexById(id: number): number {
-    const item = this.props.items.find(it => it.id === id);
+    const item = this.props.items.find((it) => it.id === id);
     return item ? this.props.items.indexOf(item) : -1;
   }
 
   private assertValidItem = (item: RLDDItem) => {
     if (item) {
-      if (typeof item !== 'object') {
+      if (typeof item !== "object") {
         throw `RLDD Error. item must be of type 'object', but it's of type '${typeof item}'.`;
       }
-      if (typeof item.id !== 'number') {
-        throw `RLDD Error. item must have an 'id' property of type 'number'. ${JSON.stringify(item)}`;
-      }
+      // if (typeof item.id !== 'number') {
+      //   throw `RLDD Error. item must have an 'id' property of type 'number'. ${JSON.stringify(item)}`;
+      // }
     }
-  }
-
+  };
 }
