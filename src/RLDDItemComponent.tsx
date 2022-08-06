@@ -1,11 +1,11 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import RLDDLogic from './RLDDLogic';
-import { Rect } from './Geometry';
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import RLDDLogic from "./RLDDLogic";
+import { Rect } from "./Geometry";
 
 export interface RLDDItemProps {
   logic: RLDDLogic;
-  itemId: number;
+  itemId: number | string;
   activity: boolean;
   dragged: boolean;
   hovered: boolean;
@@ -15,14 +15,16 @@ export interface RLDDItemState {
   isDragging: boolean;
 }
 
-export default class RLDDItemComponent extends React.Component<RLDDItemProps, RLDDItemState> {
-  
+export default class RLDDItemComponent extends React.Component<
+  RLDDItemProps,
+  RLDDItemState
+> {
   readonly state: RLDDItemState = { isDragging: false };
   private isDown: boolean = false;
   private mouseDownTimestamp: number = 0;
   private initialOffset: { x: number; y: number };
 
-	// private ref: React.RefObject<HTMLDivElement>;
+  // private ref: React.RefObject<HTMLDivElement>;
 
   constructor(props: RLDDItemProps) {
     super(props);
@@ -52,10 +54,10 @@ export default class RLDDItemComponent extends React.Component<RLDDItemProps, RL
 
   render() {
     // console.log('RLDDItemComponent.render');
-    const dragged = this.props.dragged ? 'dragged' : '';
-    const hovered = this.props.hovered ? 'hovered' : '';
-    const activity = this.props.activity ? 'activity' : '';
-    const cssClasses = 'dl-item ' + activity + ' ' + dragged + ' ' + hovered;
+    const dragged = this.props.dragged ? "dragged" : "";
+    const hovered = this.props.hovered ? "hovered" : "";
+    const activity = this.props.activity ? "activity" : "";
+    const cssClasses = "dl-item " + activity + " " + dragged + " " + hovered;
     return (
       <div
         // ref={this.ref}
@@ -70,13 +72,13 @@ export default class RLDDItemComponent extends React.Component<RLDDItemProps, RL
   /////
 
   private addDocumentListeners() {
-    document.addEventListener('mouseup', this.handleMouseUp);
-    document.addEventListener('mousemove', this.handleMouseMove);
+    document.addEventListener("mouseup", this.handleMouseUp);
+    document.addEventListener("mousemove", this.handleMouseMove);
   }
 
   private removeDocumentListeners() {
-    document.removeEventListener('mouseup', this.handleMouseUp);
-    document.removeEventListener('mousemove', this.handleMouseMove);
+    document.removeEventListener("mouseup", this.handleMouseUp);
+    document.removeEventListener("mousemove", this.handleMouseMove);
   }
 
   /////
@@ -90,13 +92,16 @@ export default class RLDDItemComponent extends React.Component<RLDDItemProps, RL
   }
 
   private handleMouseMove(e: MouseEvent) {
-    if (this.isDown === false || this.getTimeSinceMouseDown() < this.props.logic.getDragDelay()) {
+    if (
+      this.isDown === false ||
+      this.getTimeSinceMouseDown() < this.props.logic.getDragDelay()
+    ) {
       return;
     }
 
     const offset = {
-      x: e.layerX - this.initialOffset.x,
-      y: e.layerY - this.initialOffset.y
+      x: e.offsetX - this.initialOffset.x,
+      y: e.offsetY - this.initialOffset.y,
     };
 
     if (this.state.isDragging === false && this.isDown) {
@@ -120,16 +125,20 @@ export default class RLDDItemComponent extends React.Component<RLDDItemProps, RL
 
   private getBox(): Rect {
     const ref = ReactDOM.findDOMNode(this) as Element;
-    return ref ? ref.getBoundingClientRect() : { top: 0, left: 0, width: 0, height: 0 };
+    return ref
+      ? ref.getBoundingClientRect()
+      : { top: 0, left: 0, width: 0, height: 0 };
   }
 
-  private getOffset(e: { pageX: number, pageY: number }): { x: number; y: number } {
+  private getOffset(e: {
+    pageX: number;
+    pageY: number;
+  }): { x: number; y: number } {
     const box = this.getBox();
     const docElement = document.documentElement;
     return {
       x: e.pageX - (box.left + docElement.scrollLeft - docElement.clientLeft),
-      y: e.pageY - (box.top + docElement.scrollTop - docElement.clientTop)
+      y: e.pageY - (box.top + docElement.scrollTop - docElement.clientTop),
     };
   }
-
 }

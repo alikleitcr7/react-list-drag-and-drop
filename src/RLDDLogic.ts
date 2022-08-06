@@ -1,16 +1,18 @@
-import Signal from './Signal';
-import * as Geom from './Geometry';
+import Signal from "./Signal";
+import * as Geom from "./Geometry";
 
 export default class RLDDLogic {
-
   public onDragBeginSignal: Signal = new Signal();
   public onDragHoverSignal: Signal = new Signal();
   public onDragMoveSignal: Signal = new Signal();
   public onDragEndSignal: Signal = new Signal();
 
-  private lastHoveredId: number = -1;
+  private lastHoveredId: number | string = -1;
   private floatingItemBoxRect: Geom.Rect;
-  private itemBoxRects: Map<number, Geom.Rect> = new Map<number, Geom.Rect>();
+  private itemBoxRects: Map<number | string, Geom.Rect> = new Map<
+    number,
+    Geom.Rect
+  >();
 
   getThreshold(): number {
     return this.threshold;
@@ -20,27 +22,27 @@ export default class RLDDLogic {
     return this.dragDelay;
   }
 
-  constructor(
-    private threshold: number,
-    private dragDelay: number
-  ) {
-  }
+  constructor(private threshold: number, private dragDelay: number) {}
 
-  setItemIdBoxRect(itemId: number, boxRect: Geom.Rect) {
+  setItemIdBoxRect(itemId: number | string, boxRect: Geom.Rect) {
     this.itemBoxRects.set(itemId, boxRect);
   }
   setFloatingItemBoxRect(boxRect: Geom.Rect) {
     this.floatingItemBoxRect = boxRect;
   }
 
-  handleDragBegin(draggedId: number) {
+  handleDragBegin(draggedId: number | string) {
     const draggedItemRect = this.itemBoxRects.get(draggedId);
     if (draggedItemRect) {
-      this.onDragBeginSignal.dispatch(draggedId, draggedItemRect.width, draggedItemRect.height);
+      this.onDragBeginSignal.dispatch(
+        draggedId,
+        draggedItemRect.width,
+        draggedItemRect.height
+      );
     }
   }
 
-  handleDragMove(id: number, offset: Geom.Point) {
+  handleDragMove(id: number | string, offset: Geom.Point) {
     this.onDragMoveSignal.dispatch(id, offset);
     this.updateHoveredItem();
   }
@@ -76,9 +78,11 @@ export default class RLDDLogic {
     }
   }
 
-  private findHoveredItemId(): number {
+  private findHoveredItemId(): number | string {
     if (Geom.isRectValid(this.floatingItemBoxRect)) {
-      const areas = this.calculateOverlappingAreas().sort((a, b) => b.area - a.area);
+      const areas = this.calculateOverlappingAreas().sort(
+        (a, b) => b.area - a.area
+      );
       if (areas.length > 0 && areas[0].area > 0) {
         return areas[0].id;
       }
@@ -87,9 +91,11 @@ export default class RLDDLogic {
   }
 
   private calculateOverlappingAreas() {
-    const areas = new Array<{ id: number, area: number }>();
-    this.itemBoxRects.forEach((rect: Geom.Rect, itemId: number) => {
-      const area = Geom.getAreaOfIntersection(rect, this.floatingItemBoxRect) / Geom.getRectArea(rect);
+    const areas = new Array<{ id: number | string; area: number }>();
+    this.itemBoxRects.forEach((rect: Geom.Rect, itemId: number | string) => {
+      const area =
+        Geom.getAreaOfIntersection(rect, this.floatingItemBoxRect) /
+        Geom.getRectArea(rect);
       areas.push({ id: itemId, area });
     });
     return areas;

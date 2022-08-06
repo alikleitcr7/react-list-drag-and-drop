@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import RLDDLogic from './RLDDLogic';
 import { Point, Rect } from './Geometry';
-import './RLDDFloatingItem.css';
 
 export interface RLDDFloatingItemProps {
   logic: RLDDLogic;

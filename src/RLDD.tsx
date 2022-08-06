@@ -5,7 +5,7 @@ import RLDDLogic from './RLDDLogic';
 import RLDDFloatingItemComponent from './RLDDFloatingItemComponent';
 
 export interface RLDDItem {
-  id: number;
+  id: number | string;
 }
 
 export interface RLDDProps {

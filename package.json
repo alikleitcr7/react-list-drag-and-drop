@@ -1,10 +1,10 @@
 {
-  "name": "react-list-drag-and-drop",
-  "version": "0.9.2",
+  "name": "@alikleit/react-list-drag-and-drop",
+  "version": "1.0.0",
   "description": "",
   "repository": {
     "type": "git",
-    "url": "https://github.com/JulianG/react-list-drag-and-drop.git"
+    "url": "https://github.com/alikleitcr7/react-list-drag-and-drop"
   },
   "keywords": [
     "react",
