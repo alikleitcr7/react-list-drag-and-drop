@@ -5,7 +5,7 @@ import { Point, Rect } from "./Geometry";
 
 export interface RLDDFloatingItemProps {
   logic: RLDDLogic;
-  draggedId: number;
+  draggedId: number | string;
   width: number;
   height: number;
 }

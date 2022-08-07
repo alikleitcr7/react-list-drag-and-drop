@@ -20,8 +20,8 @@ export interface RLDDProps {
 }
 
 export interface RLDDState {
-  draggedId: number;
-  hoveredId: number;
+  draggedId: number | string;
+  hoveredId: number | string;
   draggedItemDimensions: { width: number; height: number };
 }
 
@@ -119,23 +119,26 @@ items: ${props.items.map((item) => item.id).toString()}`;
   }
 
   private handleDragBegin = (
-    draggedId: number,
+    draggedId: number | string,
     width: number,
     height: number
   ) => {
     const draggedItemDimensions = { width, height };
+
     this.setState({ draggedId, draggedItemDimensions });
   };
 
-  private handleMouseOver = (hoveredId: number) => {
-    if (this.state.draggedId >= 0) {
-      this.setState({ hoveredId }, () => {
-        const newItems = this.getNewItems();
-        if (newItems) {
-          this.props.onChange(newItems);
-        }
-      });
-    }
+  private handleMouseOver = (hoveredId: number | string) => {
+    if (typeof this.state.draggedId === "number" && this.state.draggedId === -1)
+      return;
+
+
+    this.setState({ hoveredId }, () => {
+      const newItems = this.getNewItems();
+      if (newItems) {
+        this.props.onChange(newItems);
+      }
+    });
   };
 
   private handleDragEnd = () => {
@@ -157,7 +160,7 @@ items: ${props.items.map((item) => item.id).toString()}`;
     return;
   }
 
-  private findItemIndexById(id: number): number {
+  private findItemIndexById(id: number | string): number {
     const item = this.props.items.find((it) => it.id === id);
     return item ? this.props.items.indexOf(item) : -1;
   }

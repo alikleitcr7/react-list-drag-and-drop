@@ -72,7 +72,10 @@ export default class RLDDLogic {
 
   private updateHoveredItem() {
     const hoveredId = this.findHoveredItemId();
-    if (hoveredId >= 0 && hoveredId !== this.lastHoveredId) {
+
+    if (typeof hoveredId === "number" && hoveredId === -1) return;
+
+    if (hoveredId !== this.lastHoveredId) {
       this.lastHoveredId = hoveredId;
       this.onDragHoverSignal.dispatch(hoveredId);
     }
