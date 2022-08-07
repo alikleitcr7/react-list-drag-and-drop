@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
 import RLDDLogic from "./RLDDLogic";
 import { Rect } from "./Geometry";
 
@@ -25,10 +24,14 @@ export default class RLDDItemComponent extends React.Component<
   private initialOffset: { x: number; y: number };
 
   // private ref: React.RefObject<HTMLDivElement>;
+  private containerElement:
+    | React.RefObject<HTMLDivElement>
+    | undefined = undefined;
 
   constructor(props: RLDDItemProps) {
     super(props);
     this.initialOffset = { x: 0, y: 0 };
+    this.containerElement = React.createRef<HTMLDivElement>();
 
     this.handleMouseDown = this.handleMouseDown.bind(this);
     this.handleMouseMove = this.handleMouseMove.bind(this);
@@ -60,7 +63,7 @@ export default class RLDDItemComponent extends React.Component<
     const cssClasses = "dl-item " + activity + " " + dragged + " " + hovered;
     return (
       <div
-        // ref={this.ref}
+        ref={this.containerElement}
         onMouseDown={this.handleMouseDown}
         className={cssClasses}
       >
@@ -124,10 +127,16 @@ export default class RLDDItemComponent extends React.Component<
   }
 
   private getBox(): Rect {
-    const ref = ReactDOM.findDOMNode(this) as Element;
-    return ref
-      ? ref.getBoundingClientRect()
-      : { top: 0, left: 0, width: 0, height: 0 };
+    const ref = this.containerElement;
+    console.log({ ref: ref ? (ref.current ? "cu" : "no") : "no" });
+
+    if (ref && ref.current) {
+      const element = ref.current.getBoundingClientRect();
+
+      return element;
+    }
+
+    return { top: 0, left: 0, width: 0, height: 0 };
   }
 
   private getOffset(e: {
